@@ -20,8 +20,8 @@ document.querySelector("#app").innerHTML = `
     </header>
     <main class="flex flex-col items-center p-4 bg-gray-300 text-black">
         <div class="w-full max-w-[1400px] mx-auto">
-            ${filters()}
-            ${cards()}
+            <section id="filter-section"> ${filters()} </section>
+            <section id="cards-section"> ${cards()}</section>
         </div>
     </main>  
 `;

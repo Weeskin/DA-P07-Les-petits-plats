@@ -62,7 +62,7 @@ const createFilterSelect = (filterType, options) => {
                             </svg>
                         </div>
                     </div>
-                    <div class="max-h-60 overflow-y-auto mt-2">
+                    <div class="max-h-60 overflow-y-auto mt-2 rounded-lg" role="menu" aria-orientation="vertical" tabindex="-1">
                         ${options.map(option => `
                             <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" data-value="${option}">${option}</a>
                         `).join('')}
@@ -105,15 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetDropdown.classList.remove('max-h-[300px]', 'opacity-100');
                 targetDropdown.classList.add('max-h-0', 'opacity-0');
                 targetChevron.classList.remove('rotate-180'); // Point down
+
                 targetButton.setAttribute('aria-expanded', 'false');
-
-                // Reset button and dropdown rounding
-                targetButton.classList.remove('rounded-t-lg', 'rounded-b-none');
+                targetButton.classList.remove('rounded-t-lg', 'rounded-b-none','rounded-xl');
                 targetButton.classList.add('rounded-lg');
-                targetDropdown.classList.remove('rounded-t-none', 'ring-opacity-5');
-                targetDropdown.classList.add('rounded-b-lg', 'ring-opacity-0'); // Re-hide ring top part
 
-                // Clear search input and reset options visibility
+                targetDropdown.classList.remove('rounded-t-none', 'ring-opacity-5');
+                targetDropdown.classList.add('rounded-b-lg', 'ring-opacity-0');
+
                 if (targetSearchInput) {
                     targetSearchInput.value = '';
                 }
@@ -125,55 +124,54 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             button.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent document click from closing immediately
-                button.classList.add('rounded-lg');
+                event.stopPropagation();
+                button.classList.add('rounded-xl');
 
-                const isOpen = dropdown.classList.contains('max-h-[300px]'); // Check current state based on max-height
+                const isOpen = dropdown.classList.contains('max-h-[300px]');
 
-                // Hide other dropdowns and reset their chevrons
                 filterTypes.forEach(otherFilterType => {
                     if (otherFilterType !== filterType) {
+                        const otherButton = document.getElementById(`menu-button-${otherFilterType}`);
                         const otherDropdown = document.getElementById(`dropdown-${otherFilterType}`);
                         const otherChevron = document.getElementById(`chevron-${otherFilterType}`);
-                        if (otherDropdown && otherChevron) {
-                            otherDropdown.classList.remove('max-h-[300px]', 'opacity-100');
-                            otherDropdown.classList.add('max-h-0', 'opacity-0');
-                            otherChevron.classList.remove('rotate-180'); // Point down
-                            button.setAttribute('aria-expanded', 'false');
+                        const otherSearchInput = otherDropdown ? otherDropdown.querySelector('input[type="text"]') : null;
+                        const otherOptionsContainer = otherDropdown ? otherDropdown.querySelector('.max-h-60') : null;
+                        if (otherButton && otherDropdown && otherChevron) {
+                            resetDropdown(otherButton, otherDropdown, otherChevron, otherSearchInput, otherOptionsContainer);
                         }
                     }
                 });
 
-                // Toggle the current dropdown
+                // Dropdown
                 if (isOpen) {
                     resetDropdown(button, dropdown, chevron, searchInput, optionsContainer);
                 } else {
-                    // Open dropdown
+                    // Ouverture dropdown
                     dropdown.classList.remove('max-h-0', 'opacity-0');
                     dropdown.classList.add('max-h-[300px]', 'opacity-100');
                     chevron.classList.add('rotate-180');
                     button.setAttribute('aria-expanded', 'true');
 
-                    // Apply open state rounding
+                    // Ouverture et mise en forme
                     button.classList.remove('rounded-lg');
                     button.classList.add('rounded-t-lg', 'rounded-b-none');
-                    dropdown.classList.remove('rounded-b-lg');
+                    dropdown.classList.remove('rounded-b-xl');
                     dropdown.classList.add('rounded-t-none');
 
                     if (searchInput) {
-                        searchInput.focus(); // Focus on search input when opened
+                        searchInput.focus(); // Focus sur le champ de recherche
                     }
                 }
             });
 
-            // Close dropdown when clicking outside
+            // Ajout du click en dehors pour fermer le dropdown
             document.addEventListener('click', (event) => {
                 if (dropdown.classList.contains('max-h-[300px]') && !button.contains(event.target) && !dropdown.contains(event.target)) {
                     resetDropdown(button, dropdown, chevron, searchInput, optionsContainer);
                 }
             });
 
-            // Search functionality
+            // Recherche dans l'input de recherche
             if (searchInput && optionsContainer) {
                 searchInput.addEventListener('input', (event) => {
                     const searchTerm = event.target.value.toLowerCase();
@@ -188,16 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Handle option selection (you'll likely want to add actual filtering logic here)
-            if (optionsContainer) {
-                optionsContainer.addEventListener('click', (event) => {
-                    const selectedOption = event.target.closest('a');
-                    if (selectedOption && selectedOption.dataset.value) {
-                        console.log(`Selected ${filterType}: ${selectedOption.dataset.value}`);
-                        resetDropdown(button, dropdown, chevron, searchInput, optionsContainer);
-                    }
-                });
-            }
+
         }
     });
 });
