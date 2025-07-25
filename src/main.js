@@ -3,6 +3,7 @@ import backgroundHeaderImage from './assets/background/header-background.jpg';
 import { searchingBar} from './components/searchingBar.js';
 import { filters } from './components/filters.js';
 import { cards } from './components/cards.js';
+import { setupSearchWithForLoop } from './components/searchWithForLoop.js';
 
 document.querySelector("#app").innerHTML = ` 
     <header class="relative bg-cover bg-center h-auto flex items-center flex-col p-6 bg-blend-luminosity " style="background-image: url('${backgroundHeaderImage}');">
@@ -25,3 +26,7 @@ document.querySelector("#app").innerHTML = `
         </div>
     </main>  
 `;
+
+document.addEventListener('DOMContentLoaded', () => {
+    setupSearchWithForLoop();
+})
