@@ -1,18 +1,6 @@
 import data from '../data/data.json'
 
-export const cards = () => {
-    if (!data) {
-        console.error('Aucune donnée trouvée.');
-        return null;
-    }
-
-    return ` 
-         <div class="font-[Manrope] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
-            ${data.map(item => unitCard(item)).join('')}
-        </div>                  
-    `;
-}
-
+// Fonction utilitaire pour générer le HTML d'une seule carte de recette
 const unitCard = (item) => {
     return `
         <div class="bg-white rounded-4xl shadow-lg overflow-hidden relative"> 
@@ -31,6 +19,7 @@ const unitCard = (item) => {
     `;
 }
 
+// Fonction utilitaire pour générer le HTML des ingrédients d'une carte
 const ingredientsArray = (item) => {
     if (!item.ingredients || item.ingredients.length === 0) {
         return '<p class="text-gray-500">Aucun ingrédient disponible</p>';
@@ -42,4 +31,36 @@ const ingredientsArray = (item) => {
             <p class="text-gray-500">${ingredientItem.quantity ? ingredientItem.quantity : ''} ${ingredientItem.unit ? ingredientItem.unit : ''}</p>
         </div>
     `).join('');
+}
+
+// Fonction principale pour rendre les cartes dans le DOM
+export const renderCards = (recipesToDisplay) => {
+    const cardsSection = document.getElementById('cards-section');
+    if (!cardsSection) {
+        console.error('Element #cards-section non trouvé dans le DOM.');
+        return;
+    }
+
+    if (recipesToDisplay.length === 0) {
+        cardsSection.innerHTML = `<p class="text-center text-gray-700 text-xl mt-8">Aucune recette trouvée pour votre recherche.</p>`;
+        return;
+    }
+
+    // Utilise la fonction unitCard pour chaque recette
+    const cardsHtml = recipesToDisplay.map(item => unitCard(item)).join('');
+    cardsSection.innerHTML = `<div class="font-[Manrope] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">${cardsHtml}</div>`;
+};
+
+// Fonction pour générer les cartes à partir des données
+export const cards = () => {
+    if (!data) {
+        console.error('Aucune donnée trouvée.');
+        return null;
+    }
+
+    return ` 
+         <div class="font-[Manrope] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+            ${data.map(item => unitCard(item)).join('')}
+        </div>                  
+    `;
 }
