@@ -10,19 +10,13 @@ export const setupSearchWithForEach = () => {
         return;
     }
 
-    let searchTimeout;
-
-    searchForm.addEventListener('submit', (event) => {
+     searchForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        clearTimeout(searchTimeout);
         performSearch();
     });
 
     searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            performSearch();
-        }, 500);
+         performSearch();
     });
 
     const performSearch = () => {
@@ -32,9 +26,6 @@ export const setupSearchWithForEach = () => {
             renderCards(data);
             return;
         }
-
-        // Mesure du temps de recherche
-        const startTime = performance.now();
 
         const filteredRecipes = [];
 
@@ -79,12 +70,6 @@ export const setupSearchWithForEach = () => {
                 filteredRecipes.push(recipe);
             }
         });
-
-        //Mesure du temps de recherche
-        const endTime = performance.now();
-        const duration = (endTime - startTime).toFixed(2); // Arrondi à 2 décimales
-
-        console.log(`Recherche avec For Loop - Terme: "${searchTerm}" - Temps: ${duration} ms`);
 
         renderCards(filteredRecipes); // Affiche les recettes filtrées
     };
