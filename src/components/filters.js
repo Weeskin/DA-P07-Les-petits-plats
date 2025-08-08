@@ -62,7 +62,7 @@ const createFilterSelect = (filterType, options) => {
                             </svg>
                         </div>
                     </div>
-                    <div class="max-h-60 overflow-y-auto mt-2 rounded-lg" role="menu" aria-orientation="vertical" tabindex="-1">
+                    <div class="max-h-60 overflow-y-auto mt-2" role="menu" aria-orientation="vertical" tabindex="-1">
                         ${options.map(option => `
                             <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-yellow-500" role="menuitem" tabindex="-1" data-value="${option}">${option}</a>
                         `).join('')}
