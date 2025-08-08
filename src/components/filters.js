@@ -1,4 +1,5 @@
-import data from '../data/data.json'; // Assuming data.json is in the same directory or adjust path as needed
+import data from '../data/data.json';
+import { renderCards } from "./cards.js"; // Assuming data.json is in the same directory or adjust path as needed
 
 const getAllUniqueIngredients = () => {
     const uniqueIngredients = new Set();
@@ -197,6 +198,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+let activeTags = [];
+
+const updateAndRenderCards = () => {
+    let filteredRecipes = [...data];
+
+    // Appliquer le filtre pour chaque tag actif
+    activeTags.forEach(tag => {
+        const tagValue = tag.value.toLowerCase();
+        const tagType = tag.type;
+
+        filteredRecipes = filteredRecipes.filter(recipe => {
+            if (tagType === 'ingredients') {
+                return recipe.ingredients.some(item => item.ingredient.toLowerCase().includes(tagValue));
+            }
+            if (tagType === 'appareils') {
+                return recipe.appliance.toLowerCase().includes(tagValue);
+            }
+            if (tagType === 'ustensiles') {
+                return recipe.ustensils.some(ustensil => ustensil.toLowerCase().includes(tagValue));
+            }
+            return false;
+        });
+    });
+
+    renderCards(filteredRecipes);
+};
+
 const createTag = (optionText, filterType) => {
     const filtersContainer = document.getElementById('filter-section');
     if (!filtersContainer) return;
@@ -222,13 +250,18 @@ const createTag = (optionText, filterType) => {
     closeButton.innerHTML = '&times;';
     closeButton.ariaLabel = "Supprimer le tag";
     closeButton.addEventListener('click', () => {
+        activeTags = activeTags.filter(tag => !(tag.value === optionText && tag.type === filterType));
         tagElement.remove(); // Supprime uniquement ce tag
         // Si c'est le dernier tag, supprime la section
         if (tagSection.childElementCount === 0) {
             tagSection.remove();
         }
+        updateAndRenderCards();
     });
 
     tagElement.appendChild(closeButton);
     tagSection.appendChild(tagElement);
+
+    activeTags.push({ type: filterType, value: optionText });
+    updateAndRenderCards();
 };
