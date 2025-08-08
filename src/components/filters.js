@@ -218,7 +218,7 @@ const createTag = (optionText, filterType) => {
 
     // Crée le bouton de fermeture
     const closeButton = document.createElement("button");
-    closeButton.className = "ml-2 text-black hover:text-gray-700";
+    closeButton.className = "ml-2 text-black hover:text-gray-700 text-3xl";
     closeButton.innerHTML = '&times;';
     closeButton.ariaLabel = "Supprimer le tag";
     closeButton.addEventListener('click', () => {
