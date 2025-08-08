@@ -64,7 +64,7 @@ const createFilterSelect = (filterType, options) => {
                     </div>
                     <div class="max-h-60 overflow-y-auto mt-2 rounded-lg" role="menu" aria-orientation="vertical" tabindex="-1">
                         ${options.map(option => `
-                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1" data-value="${option}">${option}</a>
+                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-yellow-500" role="menuitem" tabindex="-1" data-value="${option}">${option}</a>
                         `).join('')}
                     </div>
                 </div>
@@ -177,16 +177,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     const searchTerm = event.target.value.toLowerCase();
                     Array.from(optionsContainer.children).forEach(option => {
                         const optionText = option.textContent.toLowerCase();
-                        if (optionText.includes(searchTerm)) {
-                            option.style.display = 'block';
-                        } else {
-                            option.style.display = 'none';
-                        }
+                        option.style.display = optionText.includes(searchTerm) ? 'block' : 'none';
+                    });
+                });
+
+                // Ajoute un écouteur de clic à chaque option une seule fois
+                Array.from(optionsContainer.children).forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault(); // Empêche le comportement par défaut du lien <a>
+                        const optionText = option.textContent;
+                        createTag(optionText, filterType);
+                        // Optionnel : fermer le dropdown après la sélection
+                        const button = document.getElementById(`menu-button-${filterType}`);
+                        button.click();
                     });
                 });
             }
-
-
         }
     });
 });
+
+const createTag = (optionText, filterType) => {
+    const filtersContainer = document.getElementById('filter-section');
+    if (!filtersContainer) return;
+
+    // Cherche ou crée le conteneur pour les tags
+    let tagSection = document.getElementById("tag-section");
+    if (!tagSection) {
+        tagSection = document.createElement("section");
+        tagSection.id = "tag-section";
+        tagSection.className = "flex flex-wrap gap-4 px-4 mb-4";
+        // Insère la section des tags après le conteneur des filtres
+        filtersContainer.parentNode.insertBefore(tagSection, filtersContainer.nextSibling);
+    }
+
+    // Crée le tag individuel
+    const tagElement = document.createElement("div");
+    tagElement.className = "font-[Manrope] inline-flex items-center justify-center bg-yellow-500 text-black font-medium px-4 py-2 rounded-lg";
+    tagElement.textContent = optionText;
+
+    // Crée le bouton de fermeture
+    const closeButton = document.createElement("button");
+    closeButton.className = "ml-2 text-black hover:text-gray-700";
+    closeButton.innerHTML = '&times;';
+    closeButton.ariaLabel = "Supprimer le tag";
+    closeButton.addEventListener('click', () => {
+        tagElement.remove(); // Supprime uniquement ce tag
+        // Si c'est le dernier tag, supprime la section
+        if (tagSection.childElementCount === 0) {
+            tagSection.remove();
+        }
+    });
+
+    tagElement.appendChild(closeButton);
+    tagSection.appendChild(tagElement);
+};
